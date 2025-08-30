@@ -1,0 +1,37 @@
+{
+  "name": "hearthmotion",
+  "version": "1.0.4",
+  "description": "Premium smooth scrolling library with custom scrollbar and animations",
+  "main": "dist/hearthmotion.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rollup -c",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shakib-mia/hearthmotion.git"
+  },
+  "keywords": [
+    "smooth-scroll",
+    "scrollbar",
+    "animation",
+    "lenis",
+    "animate.css",
+    "on",
+    "scroll",
+    "animation",
+    "smooth",
+    "animation"
+  ],
+  "author": "shakib-mia",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/shakib-mia/hearthmotion/issues"
+  },
+  "homepage": "https://github.com/shakib-mia/hearthmotion#readme",
+  "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.4",
+    "rollup": "^4.49.0"
+  }
+}
