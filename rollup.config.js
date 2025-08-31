@@ -1,23 +1,15 @@
-import terser from "@rollup/plugin-terser";
-
-export default [
-  // Regular build
-  {
-    input: "src/hearthmotion.js",
-    output: {
+export default {
+  input: "src/hearthmotion.js",
+  output: [
+    {
       file: "dist/hearthmotion.js",
       format: "umd",
       name: "HearthMotion",
+      exports: "default",
     },
-  },
-  // Minified build
-  {
-    input: "src/hearthmotion.js",
-    output: {
-      file: "dist/hearthmotion.min.js",
-      format: "umd",
-      name: "HearthMotion",
+    {
+      file: "dist/hearthmotion.esm.js",
+      format: "es",
     },
-    plugins: [terser()],
-  },
-];
+  ],
+};
