@@ -29,6 +29,67 @@ import HearthMotion from "hearthmotion";
 import HearthMotion from "https://cdn.jsdelivr.net/npm/hearthmotion/dist/hearthmotion.esm.js";
 ```
 
+## HTML Structure Requirements
+
+For HearthMotion to work properly, you need to structure your HTML with specific wrapper elements. Fixed-position elements like navbars should be placed inside the wrapper but as siblings of the hm-content element:
+
+```html
+<body>
+  <!-- HearthMotion will automatically create this structure -->
+  <div id="hm-wrapper">
+    <!-- Fixed position elements go here (inside wrapper but outside content) -->
+    <nav
+      id="navbar"
+      style="position: fixed; top: 0; width: 100%; z-index: 1000;"
+    >
+      <!-- Navigation content -->
+    </nav>
+
+    <!-- Other fixed elements -->
+    <div
+      class="chat-widget"
+      style="position: fixed; bottom: 20px; right: 20px;"
+    >
+      <!-- Fixed chat widget -->
+    </div>
+
+    <!-- Scrolling content container -->
+    <div id="hm-content">
+      <!-- All your non-fixed content goes here -->
+      <section>
+        <h1>Your Content</h1>
+        <p>This will be inside the scrolling container</p>
+      </section>
+
+      <section data-animate="fade-in">
+        <h2>Animated Content</h2>
+        <p>This will animate when scrolled into view</p>
+      </section>
+    </div>
+
+    <!-- Custom scrollbar elements (added automatically) -->
+    <div id="hm-track">
+      <div id="hm-thumb"></div>
+    </div>
+  </div>
+</body>
+```
+
+## Important Note About HTML Structure
+
+HearthMotion automatically reorganizes your DOM when initialized. It will:
+
+1. Create the `#hm-wrapper` element if it doesn't exist
+2. Create the `#hm-content` element and move all non-fixed, non-script/style elements into it
+3. Keep fixed-position elements inside the wrapper but as siblings of `#hm-content`
+
+If you need to maintain specific elements outside the scrolling container, ensure they have:
+
+- `position: fixed` in their CSS, OR
+- Are `<script>`, `<style>`, or `<link>` elements
+
+Fixed elements should be placed inside the `#hm-wrapper` but outside the `#hm-content` to work properly with the smooth scrolling.
+
 ## Initialization
 
 ```javascript
@@ -152,6 +213,11 @@ The navbar will:
       #navbar {
         padding: 1rem;
         background: transparent;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        transition: all 0.3s ease;
       }
 
       section {
@@ -163,6 +229,8 @@ The navbar will:
     </style>
   </head>
   <body>
+    <!-- HearthMotion will create the wrapper structure -->
+
     <nav id="navbar">
       <h1>My Website</h1>
     </nav>
@@ -242,17 +310,22 @@ If you're installing via NPM, here's what you can expect in the package.json:
 
 ### Common Issues
 
-1. **Animations not working**
+1. **Fixed elements not working correctly**
+
+   - Ensure fixed elements have `position: fixed` and are inside `#hm-wrapper`
+   - Check that fixed elements are not inside `#hm-content`
+
+2. **Animations not working**
 
    - Ensure Animate.css loads correctly
    - Check browser console for errors
 
-2. **Scrollbar not appearing**
+3. **Scrollbar not appearing**
 
    - Verify the wrapper and content elements are created
    - Check if custom styles are conflicting
 
-3. **Smooth scrolling not working**
+4. **Smooth scrolling not working**
    - Verify Lenis loads correctly
    - Check for JavaScript errors
 
@@ -263,3 +336,13 @@ Enable browser developer tools and check the console for error messages. The lib
 ## License
 
 HearthMotion is open source software licensed under MIT License.
+
+## Changelog
+
+### Version 1.0.0
+
+- Initial release
+- Smooth scrolling with Lenis
+- Custom scrollbar
+- Scroll-triggered animations
+- Navigation bar behavior
