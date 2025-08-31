@@ -6,17 +6,27 @@ HearthMotion is a JavaScript library that provides smooth scrolling, custom scro
 
 ## Installation
 
+### NPM
+
+```bash
+npm install hearthmotion
+```
+
+```javascript
+import HearthMotion from "hearthmotion";
+```
+
 ### Browser (CDN)
 
 ```html
 <!-- Include after your stylesheets -->
-<script src="path/to/hearthmotion.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hearthmotion/dist/hearthmotion.min.js"></script>
 ```
 
-### ES Module
+### ES Module (CDN)
 
 ```javascript
-import HearthMotion from "path/to/hearthmotion.js";
+import HearthMotion from "https://cdn.jsdelivr.net/npm/hearthmotion/dist/hearthmotion.esm.js";
 ```
 
 ## Initialization
@@ -53,31 +63,31 @@ HearthMotion.init({
 
 ### Scrollbar Configuration
 
-| Property    | Type    | Default           | Description                          |
-| ----------- | ------- | ----------------- | ------------------------------------ |
-| trackColor  | string  | "rgba(0,0,0,0.2)" | Color of the scrollbar track         |
-| thumbColor  | string  | "rgba(0,0,0,0.5)" | Color of the scrollbar thumb         |
-| hoverColor  | string  | "rgba(0,0,0,0.7)" | Color of the thumb on hover          |
-| trackWidth  | string  | "6px"             | Width of the scrollbar track         |
-| thumbRadius | string  | "4px"             | Border radius of the thumb           |
-| autoHide    | boolean | true              | Whether to auto-hide the scrollbar   |
-| hideDelay   | number  | 2000              | Delay before hiding (ms)             |
-| edgeZone    | number  | 20                | Right-edge detection zone width (px) |
+| Property      | Type    | Default             | Description                          |
+| ------------- | ------- | ------------------- | ------------------------------------ |
+| `trackColor`  | string  | `"rgba(0,0,0,0.2)"` | Color of the scrollbar track         |
+| `thumbColor`  | string  | `"rgba(0,0,0,0.5)"` | Color of the scrollbar thumb         |
+| `hoverColor`  | string  | `"rgba(0,0,0,0.7)"` | Color of the thumb on hover          |
+| `trackWidth`  | string  | `"6px"`             | Width of the scrollbar track         |
+| `thumbRadius` | string  | `"4px"`             | Border radius of the thumb           |
+| `autoHide`    | boolean | `true`              | Whether to auto-hide the scrollbar   |
+| `hideDelay`   | number  | `2000`              | Delay before hiding (ms)             |
+| `edgeZone`    | number  | `20`                | Right-edge detection zone width (px) |
 
 ### Animations Configuration
 
-| Property   | Type   | Default             | Description                      |
-| ---------- | ------ | ------------------- | -------------------------------- |
-| threshold  | number | 0.1                 | IntersectionObserver threshold   |
-| rootMargin | string | "0px 0px -20px 0px" | IntersectionObserver root margin |
+| Property     | Type   | Default               | Description                      |
+| ------------ | ------ | --------------------- | -------------------------------- |
+| `threshold`  | number | `0.1`                 | IntersectionObserver threshold   |
+| `rootMargin` | string | `"0px 0px -20px 0px"` | IntersectionObserver root margin |
 
 ### Lenis Configuration
 
-| Property  | Type    | Default | Description             |
-| --------- | ------- | ------- | ----------------------- |
-| smooth    | boolean | true    | Enable smooth scrolling |
-| syncWheel | boolean | true    | Sync with wheel events  |
-| syncTouch | boolean | true    | Sync with touch events  |
+| Property    | Type    | Default | Description             |
+| ----------- | ------- | ------- | ----------------------- |
+| `smooth`    | boolean | `true`  | Enable smooth scrolling |
+| `syncWheel` | boolean | `true`  | Sync with wheel events  |
+| `syncTouch` | boolean | `true`  | Sync with touch events  |
 
 ## Scroll Animations
 
@@ -91,13 +101,13 @@ Add scroll-triggered animations using data attributes:
 
 ### Available Animation Attributes
 
-- **data-animate**: Animation type (e.g., "fade-in", "slide-in-up")
-- **data-delay**: Animation delay (ms or with unit)
-- **data-duration**: Animation duration (ms or with unit)
+- `data-animate`: Animation type (e.g., "fade-in", "slide-in-up")
+- `data-delay`: Animation delay (ms or with unit)
+- `data-duration`: Animation duration (ms or with unit)
 
 ### Supported Animations
 
-All Animate.css animations are supported. Use kebab-case names (e.g., "fade-in", "slide-in-left").
+All [Animate.css](https://animate.style/) animations are supported. Use kebab-case names (e.g., "fade-in", "slide-in-left").
 
 ## Navigation Bar
 
@@ -119,17 +129,17 @@ The navbar will:
 
 ### Methods
 
-| Method                       | Description                                         | Returns      |
-| ---------------------------- | --------------------------------------------------- | ------------ |
-| init(config)                 | Initialize HearthMotion with optional configuration | Promise      |
-| initScrollAnimations(config) | Initialize scroll animations only                   | void         |
-| getLenis()                   | Get the Lenis instance                              | Lenis object |
+| Method                         | Description                                         | Returns      |
+| ------------------------------ | --------------------------------------------------- | ------------ |
+| `init(config)`                 | Initialize HearthMotion with optional configuration | Promise      |
+| `initScrollAnimations(config)` | Initialize scroll animations only                   | void         |
+| `getLenis()`                   | Get the Lenis instance                              | Lenis object |
 
 ### Properties
 
 | Property | Description                              |
 | -------- | ---------------------------------------- |
-| \_lenis  | Internal reference to the Lenis instance |
+| `_lenis` | Internal reference to the Lenis instance |
 
 ## Example Usage
 
@@ -167,7 +177,7 @@ The navbar will:
       </p>
     </section>
 
-    <script src="hearthmotion.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hearthmotion/dist/hearthmotion.min.js"></script>
     <script>
       HearthMotion.init({
         scrollbar: {
@@ -191,29 +201,60 @@ HearthMotion supports modern browsers including:
 
 ## Dependencies
 
-- **Lenis** - Smooth scrolling library
-- **Animate.css** - CSS animation library
+- [Lenis](https://github.com/studio-freight/lenis) - Smooth scrolling library
+- [Animate.css](https://animate.style/) - CSS animation library
 
 These are automatically loaded from CDN when initializing HearthMotion.
+
+## Package.json Reference
+
+If you're installing via NPM, here's what you can expect in the package.json:
+
+```json
+{
+  "name": "hearthmotion",
+  "version": "1.0.0",
+  "description": "Smooth scrolling, custom scrollbars, and scroll-based animations",
+  "main": "dist/hearthmotion.cjs.js",
+  "module": "dist/hearthmotion.esm.js",
+  "browser": "dist/hearthmotion.min.js",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w"
+  },
+  "keywords": [
+    "smooth-scroll",
+    "animations",
+    "scrollbar",
+    "lenis",
+    "animate.css"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "rollup": "^2.60.0",
+    "rollup-plugin-terser": "^7.0.2"
+  }
+}
+```
 
 ## Troubleshooting
 
 ### Common Issues
 
-**Animations not working**
+1. **Animations not working**
 
-- Ensure Animate.css loads correctly
-- Check browser console for errors
+   - Ensure Animate.css loads correctly
+   - Check browser console for errors
 
-**Scrollbar not appearing**
+2. **Scrollbar not appearing**
 
-- Verify the wrapper and content elements are created
-- Check if custom styles are conflicting
+   - Verify the wrapper and content elements are created
+   - Check if custom styles are conflicting
 
-**Smooth scrolling not working**
-
-- Verify Lenis loads correctly
-- Check for JavaScript errors
+3. **Smooth scrolling not working**
+   - Verify Lenis loads correctly
+   - Check for JavaScript errors
 
 ### Debugging
 
@@ -222,13 +263,3 @@ Enable browser developer tools and check the console for error messages. The lib
 ## License
 
 HearthMotion is open source software licensed under MIT License.
-
-## Changelog
-
-### Version 1.0.0
-
-- Initial release
-- Smooth scrolling with Lenis
-- Custom scrollbar
-- Scroll-triggered animations
-- Navigation bar behavior
