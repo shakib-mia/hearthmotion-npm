@@ -1,6 +1,6 @@
 {
   "name": "hearthmotion",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Premium smooth scrolling library with custom scrollbar and animations",
   "main": "dist/hearthmotion.js",
   "scripts": {
