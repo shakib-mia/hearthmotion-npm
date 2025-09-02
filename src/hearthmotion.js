@@ -1,3 +1,4 @@
+// hearthmotion.js
 function hyphenToCamelCase(text) {
   return text.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
 }
@@ -34,7 +35,14 @@ async function loadLenis() {
   });
 }
 
+// Track moved elements and created elements for cleanup
+let movedElements = [];
+let createdElements = [];
+
 function initWrapper(config) {
+  // Clean up any existing instance first
+  cleanup();
+
   let wrapper = document.getElementById("hm-wrapper");
   let content = document.getElementById("hm-content");
 
@@ -42,26 +50,42 @@ function initWrapper(config) {
     wrapper = document.createElement("div");
     wrapper.id = "hm-wrapper";
     document.body.appendChild(wrapper);
+    createdElements.push(wrapper);
   }
 
   if (!content) {
     content = document.createElement("div");
     content.id = "hm-content";
+    createdElements.push(content);
   }
 
   const track = document.createElement("div");
   track.id = "hm-track";
+  createdElements.push(track);
+
   const thumb = document.createElement("div");
   thumb.id = "hm-thumb";
+  createdElements.push(thumb);
+
   track.appendChild(thumb);
 
-  Array.from(document.body.children).forEach((child) => {
+  // Clear previous moved elements
+  movedElements = [];
+
+  // Get all elements that should be moved
+  const elementsToMove = Array.from(document.body.children).filter((child) => {
     const computed = window.getComputedStyle(child);
     const isFixed = computed.position === "fixed";
     const isScriptOrStyle = ["SCRIPT", "STYLE", "LINK"].includes(child.tagName);
-    if (child !== wrapper && !isFixed && !isScriptOrStyle) {
-      content.appendChild(child);
-    }
+    const isNextJsRoot = child.id === "__next";
+
+    return child !== wrapper && !isFixed && !isScriptOrStyle && !isNextJsRoot;
+  });
+
+  // Move elements
+  elementsToMove.forEach((child) => {
+    content.appendChild(child);
+    movedElements.push(child);
   });
 
   wrapper.appendChild(content);
@@ -107,6 +131,7 @@ function initWrapper(config) {
   }
 `;
   document.head.appendChild(style);
+  createdElements.push(style);
 
   return { wrapper, content, track, thumb };
 }
@@ -298,9 +323,13 @@ function initScrollAnimations(config) {
   }, 100);
 }
 
-function initNavbar(lenis) {
+function initNavbar(lenis, config) {
   const navbar = document.getElementById("navbar");
   if (!navbar) return;
+
+  // Check if page has light background
+  const hasLightBackground = document.body.classList.contains("light-header");
+
   let lastScrollY = 0;
   let scrollDirection = "up";
   navbar.style.transition = "all 0.5s ease";
@@ -314,19 +343,27 @@ function initNavbar(lenis) {
     if (scroll > lastScrollY) scrollDirection = "down";
     else scrollDirection = "up";
     lastScrollY = scroll;
+
     if (scrollDirection === "down" && scroll > 50) {
       navbar.style.transform = "translateY(-100%)";
     } else {
       navbar.style.transform = "translateY(0)";
     }
+
     if (scroll > 0) {
       navbar.style.boxShadow = "0 0 20px 0 #2B245D21";
       navbar.style.backgroundColor = "#FFF";
-      navbar.style.color = "#000";
+      // Use appropriate text color based on background
+      navbar.style.color = hasLightBackground
+        ? config.navbar?.textColorScrolled || "#000"
+        : "#000";
     } else {
       navbar.style.boxShadow = "none";
       navbar.style.backgroundColor = "transparent";
-      navbar.style.color = "#FFF";
+      // Use appropriate text color based on background
+      navbar.style.color = hasLightBackground
+        ? config.navbar?.textColorTop || "#333"
+        : "#FFF";
     }
   }
 
@@ -358,6 +395,11 @@ const defaultConfig = {
     syncWheel: true,
     syncTouch: true,
   },
+  // Add navbar configuration
+  navbar: {
+    textColorScrolled: "#000", // Default text color when scrolled
+    textColorTop: "#FFF", // Default text color at top of page
+  },
 };
 
 function mergeConfig(userConfig = {}) {
@@ -365,11 +407,54 @@ function mergeConfig(userConfig = {}) {
     scrollbar: { ...defaultConfig.scrollbar, ...userConfig.scrollbar },
     animations: { ...defaultConfig.animations, ...userConfig.animations },
     lenis: { ...defaultConfig.lenis, ...userConfig.lenis },
+    navbar: { ...defaultConfig.navbar, ...userConfig.navbar }, // Merge navbar config
   };
+}
+
+// Add cleanup function
+function cleanup() {
+  // Restore moved elements to their original position
+  movedElements.forEach((element) => {
+    if (element.parentNode && element.parentNode.id === "hm-content") {
+      try {
+        document.body.appendChild(element);
+      } catch (e) {
+        console.warn("Could not restore element:", e);
+      }
+    }
+  });
+
+  // Remove created elements
+  createdElements.forEach((element) => {
+    if (element && element.parentNode) {
+      try {
+        element.parentNode.removeChild(element);
+      } catch (e) {
+        console.warn("Could not remove element:", e);
+      }
+    }
+  });
+
+  // Clear Lenis instance
+  if (HearthMotion._lenis) {
+    try {
+      HearthMotion._lenis.destroy();
+    } catch (e) {
+      console.warn("Could not destroy Lenis:", e);
+    }
+    HearthMotion._lenis = null;
+  }
+
+  // Clear arrays
+  movedElements = [];
+  createdElements = [];
 }
 
 async function init(userConfig = {}) {
   try {
+    // Clean up any existing instance first
+    cleanup();
+
     const config = mergeConfig(userConfig);
 
     await loadAnimateCSS();
@@ -377,7 +462,7 @@ async function init(userConfig = {}) {
     const { wrapper, content, track, thumb } = initWrapper(config);
     const lenis = initLenis(wrapper, content, config);
     initThumb(lenis, wrapper, content, track, thumb, config);
-    initNavbar(lenis);
+    initNavbar(lenis, config);
     initScrollAnimations(config);
     console.log("HearthMotion initialized successfully!");
   } catch (e) {
@@ -390,6 +475,7 @@ const HearthMotion = {
   init,
   initScrollAnimations,
   getLenis: () => HearthMotion._lenis,
+  cleanup, // Export cleanup function
   _lenis: null,
 };
 
