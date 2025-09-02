@@ -35,8 +35,9 @@ async function loadLenis() {
   });
 }
 
-// Track created elements for cleanup (optional)
+// Track created elements + observers for cleanup
 let createdElements = [];
+let observers = [];
 
 function initWrapper() {
   let wrapper = document.getElementById("hm-wrapper");
@@ -50,6 +51,11 @@ function initWrapper() {
 }
 
 function initLenis(wrapper, content, config) {
+  if (!window.Lenis) {
+    console.warn("Lenis not loaded yet!");
+    return null;
+  }
+
   const lenis = new window.Lenis({ wrapper, content, ...config.lenis });
 
   function raf(time) {
@@ -68,20 +74,25 @@ function initScrollAnimations(config) {
       entries.forEach((entry) => {
         const el = entry.target;
         const animation = el.dataset.animate;
+
         if (entry.isIntersecting && !el.classList.contains("animated")) {
           if (!animation) return;
+
           let delay = el.dataset.delay || "0";
           let duration = el.dataset.duration || "800";
           if (/^\d+$/.test(delay)) delay += "ms";
           if (/^\d+$/.test(duration)) duration += "ms";
+
           el.style.opacity = "1";
           el.style.animationDelay = delay;
           el.style.animationDuration = duration;
+
           el.classList.add(
             "animate__animated",
             `animate__${hyphenToCamelCase(animation)}`
           );
           el.classList.add("animated");
+
           el.addEventListener(
             "animationend",
             () => {
@@ -106,6 +117,8 @@ function initScrollAnimations(config) {
     el.style.opacity = "0";
     observer.observe(el);
   });
+
+  observers.push(observer); // ✅ track observer
 }
 
 function mergeConfig(userConfig = {}) {
@@ -122,24 +135,34 @@ function mergeConfig(userConfig = {}) {
 }
 
 function cleanup() {
+  // Lenis destroy
   if (HearthMotion._lenis) {
     try {
-      HearthMotion._lenis.destroy();
-      HearthMotion._lenis = null;
+      if (typeof HearthMotion._lenis.destroy === "function") {
+        HearthMotion._lenis.destroy();
+      }
     } catch (e) {
       console.warn("Could not destroy Lenis:", e);
     }
+    HearthMotion._lenis = null;
   }
+
+  // Remove created elements
   createdElements.forEach((el) => {
     if (el.parentNode) el.parentNode.removeChild(el);
   });
   createdElements = [];
+
+  // Disconnect observers
+  observers.forEach((obs) => obs.disconnect());
+  observers = [];
 }
 
 async function init(userConfig = {}) {
   try {
     cleanup();
     const config = mergeConfig(userConfig);
+
     await loadAnimateCSS();
     await loadLenis();
 
