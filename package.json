@@ -3,6 +3,14 @@
   "version": "1.0.12",
   "description": "Premium smooth scrolling library with custom scrollbar and animations",
   "main": "dist/hearthmotion.js",
+  "exports": {
+    ".": "./hearthmotion.js",
+    "./next": "./hearthmotion-next.js"
+  },
+  "files": [
+    "hearthmotion.js",
+    "hearthmotion-next.js"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rollup -c",
