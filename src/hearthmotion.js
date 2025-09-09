@@ -25,6 +25,7 @@
       (entries) => {
         entries.forEach((entry) => {
           const el = entry.target;
+          el.style.opacity = "0";
           const animation = el.dataset.animate;
 
           if (entry.isIntersecting && !el.classList.contains("animated")) {
