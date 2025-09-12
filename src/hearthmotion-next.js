@@ -534,19 +534,6 @@
 
   // Enhanced cleanup function
   function cleanup() {
-    // Safe element removal
-    createdElements.forEach(function (element) {
-      try {
-        if (element && element.parentNode) {
-          if (element.parentNode.contains(element)) {
-            element.parentNode.removeChild(element);
-          }
-        }
-      } catch (e) {
-        console.warn("Could not remove element:", e.message);
-      }
-    });
-
     // Safe element restoration
     movedElements.forEach(function (element) {
       try {
@@ -555,12 +542,27 @@
           element.parentNode &&
           element.parentNode.id === "hm-content"
         ) {
-          if (!document.body.contains(element)) {
+          // Check if the element still exists in the DOM
+          if (document.body.contains(element.parentNode)) {
             document.body.appendChild(element);
           }
         }
       } catch (e) {
         console.warn("Could not restore element:", e.message);
+      }
+    });
+
+    // Safe element removal
+    createdElements.forEach(function (element) {
+      try {
+        if (element && element.parentNode) {
+          // Check if the element still exists in the DOM before removing
+          if (document.body.contains(element)) {
+            element.parentNode.removeChild(element);
+          }
+        }
+      } catch (e) {
+        console.warn("Could not remove element:", e.message);
       }
     });
 
